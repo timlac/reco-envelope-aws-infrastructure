@@ -2,23 +2,23 @@ import numpy as np
 import random
 
 
-def generate_list(block_size_dict, groups):
-    print(f"block_size_dict: {block_size_dict}")
-
+def generate_blocks(block_size_list, list_length, treatment_groups):
     ret = []
+    remaining_list_length = list_length
 
-    current_block = 1
-
-    for index, (size, number_of_blocks) in enumerate(block_size_dict.items()):
-        for block in range(number_of_blocks):
-            items = get_items(groups, size)
+    block_index = 0
+    while remaining_list_length > 0:
+        sampled_block_size = random.choice(block_size_list)
+        if sampled_block_size <= remaining_list_length:
+            items = get_items(treatment_groups, sampled_block_size)
 
             items_with_index = []
             for item in items:
-                items_with_index.append({"block_index": current_block, "item": item})
-            ret.extend(items_with_index)
+                items_with_index.append({"block_index": block_index, "group": item})
 
-            current_block += 1
+            ret.extend(items_with_index)
+            block_index += 1
+            remaining_list_length -= sampled_block_size
     return ret
 
 

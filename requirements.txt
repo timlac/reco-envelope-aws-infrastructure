@@ -1,4 +1,6 @@
 aws-cdk-lib==2.104.0
 constructs>=10.0.0,<11.0.0
 
-numpy~=1.24.4
+numpy~=1.26.3
+
+pydantic==2.7.1

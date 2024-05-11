@@ -1,5 +1,5 @@
 import json
-
+import pandas as pd
 from generate_randomization_list import handler
 
 body = {
@@ -29,4 +29,9 @@ event = {
 
 ret = handler(event=event, context=None)
 
-print(ret)
+body = json.loads(ret["body"])
+print(body)
+
+df = pd.DataFrame(body)
+
+print(df["block_index"].value_counts())

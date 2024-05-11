@@ -28,6 +28,15 @@ class EnvelopeStack(Stack):
                                  deploy=False
                                  )
 
+        # DynamoDB
+        group_list_table = dynamodb.Table(self, "group_list_table",
+                                      partition_key=dynamodb.Attribute(
+                                          name="group_list_id",
+                                          type=dynamodb.AttributeType.STRING
+                                      ),
+                                      billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+                                      )
+
         layer = lambda_.LayerVersion(
             self, 'DependencyLayer',
             code=lambda_.Code.from_asset('lambda/layer/my-layer.zip'),
@@ -44,11 +53,23 @@ class EnvelopeStack(Stack):
             layers=[layer]
         )
 
+        create_list = lambda_.Function(
+            self, "CreateList",
+            runtime=lambda_.Runtime.PYTHON_3_10,
+            handler="create_list.handler",
+            code=lambda_.Code.from_asset("lambda"),
+            environment={"DYNAMODB_TABLE_NAME": group_list_table.table_name}
+
+        )
+
         say_hello = lambda_.Function(self, "HelloWorld",
                                        runtime=lambda_.Runtime.PYTHON_3_10,
                                        handler="hello_world.handler",
                                        code=lambda_.Code.from_asset("lambda")
                                        )
+
+        group_list_table.grant_read_write_data(create_list)
+
 
         simple_randomizer = api.root.add_resource('simple_randomizer')
         hello_world = api.root.add_resource('hello_world')
