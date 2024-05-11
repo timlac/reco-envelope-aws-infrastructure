@@ -3,6 +3,8 @@ import random
 
 
 def generate_list(block_size_dict, groups):
+    print(f"block_size_dict: {block_size_dict}")
+
     ret = []
 
     current_block = 1

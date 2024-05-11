@@ -44,11 +44,19 @@ class EnvelopeStack(Stack):
             layers=[layer]
         )
 
+        say_hello = lambda_.Function(self, "HelloWorld",
+                                       runtime=lambda_.Runtime.PYTHON_3_10,
+                                       handler="hello_world.handler",
+                                       code=lambda_.Code.from_asset("lambda")
+                                       )
+
         simple_randomizer = api.root.add_resource('simple_randomizer')
+        hello_world = api.root.add_resource('hello_world')
 
         simple_randomizer.add_method("POST", apigateway.LambdaIntegration(generate_randomization_list))
+        hello_world.add_method("GET", apigateway.LambdaIntegration(say_hello))
 
-        api_deployment = apigateway.Deployment(self, "APIDeployment20240510c", api=api)
+        api_deployment = apigateway.Deployment(self, "APIDeployment20240511", api=api)
         api_stage = apigateway.Stage(self, f"{env}", deployment=api_deployment, stage_name=env)
 
 
