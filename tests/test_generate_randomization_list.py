@@ -5,12 +5,10 @@ from generate_randomization_list import handler
 body = {
     "block_size_list": [
         "12",
-        "24"
+        "24",
+        "50"
     ],
     "list_length": "240",
-    "A": "5",
-    "B": "5",
-    "C": "2",
     "treatment_groups": {
         "C": "2",
         "B": "5",
@@ -30,7 +28,9 @@ event = {
 ret = handler(event=event, context=None)
 
 body = json.loads(ret["body"])
+print(f"len body: {len(body)}")
 print(body)
+
 
 df = pd.DataFrame(body)
 

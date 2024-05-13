@@ -6,14 +6,14 @@ from zoneinfo import ZoneInfo
 
 class GroupListItemModel(BaseModel):
     retrieved: int
-    retrieved_at: Optional[str]
-    data: Dict[str, Any]
+    retrieved_at: Optional[str] = None
+    data: Dict[str, Any] = {}
 
 
 class GroupListModel(BaseModel):
     group_list_id: str
     created_at: str
-    list_items: list[GroupListItemModel]
+    group_list_items: list[GroupListItemModel]
 
     def __init__(self, **data):
         if 'created_at' not in data:

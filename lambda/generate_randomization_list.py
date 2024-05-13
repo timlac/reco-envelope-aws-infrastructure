@@ -1,5 +1,5 @@
 import json
-from generate_list import generate_blocks
+from generate_list import generate_blocks, assert_proportions
 from utils import generate_response
 
 

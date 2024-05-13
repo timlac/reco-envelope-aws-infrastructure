@@ -6,7 +6,6 @@ from aws_cdk import (
     aws_s3 as s3
 )
 from constructs import Construct
-from aws_cdk.aws_cognito import UserPool
 
 
 class EnvelopeStack(Stack):
@@ -49,18 +48,35 @@ class EnvelopeStack(Stack):
             runtime=lambda_.Runtime.PYTHON_3_10,
             handler="generate_randomization_list.handler",
             code=lambda_.Code.from_asset("lambda"),
-            memory_size=2048,
+            memory_size=4096,
             layers=[layer]
         )
 
-        create_list = lambda_.Function(
-            self, "CreateList",
+        create_group_list = lambda_.Function(
+            self, "CreateGroupList",
             runtime=lambda_.Runtime.PYTHON_3_10,
-            handler="create_list.handler",
+            handler="create_group_list.handler",
             code=lambda_.Code.from_asset("lambda"),
-            environment={"DYNAMODB_TABLE_NAME": group_list_table.table_name}
-
+            environment={"DYNAMODB_TABLE_NAME": group_list_table.table_name},
+            layers = [layer]
         )
+
+        get_specific_group_list = lambda_.Function(self, "GetSpecificGroupList",
+                                                   runtime=lambda_.Runtime.PYTHON_3_10,
+                                                   handler="get_specific_group_list.handler",
+                                                   code=lambda_.Code.from_asset("lambda"),
+                                                   environment={"DYNAMODB_TABLE_NAME": group_list_table.table_name},
+                                                   memory_size=1024,
+                                                   layers = [layer])
+
+        get_next_group_list_item = lambda_.Function(self, "GetNextGroupListItem",
+                                                    runtime=lambda_.Runtime.PYTHON_3_10,
+                                                    handler="get_next_group_list_item.handler",
+                                                    code=lambda_.Code.from_asset("lambda"),
+                                                    environment={"DYNAMODB_TABLE_NAME": group_list_table.table_name},
+                                                    memory_size=1024,
+                                                    layers = [layer])
+
 
         say_hello = lambda_.Function(self, "HelloWorld",
                                        runtime=lambda_.Runtime.PYTHON_3_10,
@@ -68,16 +84,26 @@ class EnvelopeStack(Stack):
                                        code=lambda_.Code.from_asset("lambda")
                                        )
 
-        group_list_table.grant_read_write_data(create_list)
+        group_list_table.grant_read_write_data(create_group_list)
+        group_list_table.grant_read_data(get_specific_group_list)
+        group_list_table.grant_read_write_data(get_next_group_list_item)
 
+        group_lists = api.root.add_resource("group_lists")
+        group_lists.add_method("POST", apigateway.LambdaIntegration(create_group_list))
+
+        specific_group_list = group_lists.add_resource("{group_list_id}")
+        specific_group_list.add_method("GET", apigateway.LambdaIntegration(get_specific_group_list))
+
+        specific_group_list_next = specific_group_list.add_resource("next_item")
+        specific_group_list_next.add_method("GET", apigateway.LambdaIntegration(get_next_group_list_item))
 
         simple_randomizer = api.root.add_resource('simple_randomizer')
-        hello_world = api.root.add_resource('hello_world')
-
         simple_randomizer.add_method("POST", apigateway.LambdaIntegration(generate_randomization_list))
+
+        hello_world = api.root.add_resource('hello_world')
         hello_world.add_method("GET", apigateway.LambdaIntegration(say_hello))
 
-        api_deployment = apigateway.Deployment(self, "APIDeployment20240511", api=api)
+        api_deployment = apigateway.Deployment(self, "APIDeployment20240512c", api=api)
         api_stage = apigateway.Stage(self, f"{env}", deployment=api_deployment, stage_name=env)
 
 
