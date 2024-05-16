@@ -3,6 +3,8 @@ import os
 from dotenv import load_dotenv
 
 
+os.environ['AWS_PROFILE'] = 'rackspaceAcc'
+
 from get_next_group_list_item import handler
 
 load_dotenv()
@@ -13,8 +15,11 @@ os.environ["DYNAMODB_TABLE_NAME"] = TABLE_NAME
 event = {
     "pathParameters":
         {
-            "group_list_id": "5a6ec4955c869e921f32bb4e17edd31827728cc1924c3a21f192c2a068c004cc"
-        }
+            "group_list_id": "caea2310fc38db392849427e06ad89724d556eb2c6996b94e4752b45e9083e8e"
+        },
+    "body": json.dumps({
+        "participant_id": "Tim"
+    })
 }
 
 

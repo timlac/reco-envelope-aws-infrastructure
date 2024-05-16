@@ -1,7 +1,7 @@
 import os
 import datetime
 from zoneinfo import ZoneInfo
-
+import json
 from utils import generate_response
 from group_list_repository import GroupListRepository
 from models import GroupListModel, GroupListItemModel
@@ -23,7 +23,11 @@ def get_next_item_index(group_list_model):
 def handler(event, context):
     group_list_id = event['pathParameters']['group_list_id']
 
+    body = json.loads(event['body'])
+    participant_id = body['participant_id']
+
     print(f"group_list_id: {group_list_id}")
+    print(f"participant_id: {participant_id}")
 
     try:
         group_list_repository = GroupListRepository(os.environ["DYNAMODB_TABLE_NAME"])
@@ -37,20 +41,22 @@ def handler(event, context):
 
         next_item_index = get_next_item_index(group_list_model)
 
-        if not next_item_index:
+        if next_item_index == None:
             return generate_response(200, body={
                 "status": "finished",
                 "message": "All items already retrieved"
             })
 
         current_time = str(datetime.datetime.now(ZoneInfo("Europe/Berlin")).isoformat())
-        group_list_repository.update_list_item(group_list_id,
-                                               next_item_index,
-                                               current_time)
-        resp = {
+        group_list_repository.update_list_item(group_list_id=group_list_id,
+                                               update_idx=next_item_index,
+                                               participant_id=participant_id,
+                                               retrieved_at=current_time)
 
+        resp = {
             "group_list_id": group_list_id,
             "group_list_item": group_list_model.group_list_items[next_item_index].dict(),
+            "participant_id": participant_id,
             "group_list_item_index": next_item_index,
             "retrieved_at": current_time
         }

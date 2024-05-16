@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 class GroupListItemModel(BaseModel):
     retrieved: int
     retrieved_at: Optional[str] = None
+    participant_id: Optional[str] = None
     data: Dict[str, Any] = {}
 
 

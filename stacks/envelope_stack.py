@@ -95,7 +95,7 @@ class EnvelopeStack(Stack):
         specific_group_list.add_method("GET", apigateway.LambdaIntegration(get_specific_group_list))
 
         specific_group_list_next = specific_group_list.add_resource("next_item")
-        specific_group_list_next.add_method("GET", apigateway.LambdaIntegration(get_next_group_list_item))
+        specific_group_list_next.add_method("POST", apigateway.LambdaIntegration(get_next_group_list_item))
 
         simple_randomizer = api.root.add_resource('simple_randomizer')
         simple_randomizer.add_method("POST", apigateway.LambdaIntegration(generate_randomization_list))
@@ -103,7 +103,7 @@ class EnvelopeStack(Stack):
         hello_world = api.root.add_resource('hello_world')
         hello_world.add_method("GET", apigateway.LambdaIntegration(say_hello))
 
-        api_deployment = apigateway.Deployment(self, "APIDeployment20240512c", api=api)
+        api_deployment = apigateway.Deployment(self, "APIDeployment20240516a", api=api)
         api_stage = apigateway.Stage(self, f"{env}", deployment=api_deployment, stage_name=env)
 
 

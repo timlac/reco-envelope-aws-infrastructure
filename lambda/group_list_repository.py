@@ -1,7 +1,6 @@
 import boto3
 
 
-
 class GroupListRepository:
 
     def __init__(self, table_name):
@@ -22,16 +21,18 @@ class GroupListRepository:
         )
         return response.get('Item')
 
-    def update_list_item(self, group_list_id, update_idx, retrieved_at):
+    def update_list_item(self, group_list_id, update_idx, participant_id, retrieved_at):
 
         self.table.update_item(
             Key={
                 'group_list_id': group_list_id,
             },
             UpdateExpression=f'SET group_list_items[{update_idx}].retrieved = :retrievedVal, '
+                             f'group_list_items[{update_idx}].participant_id = :participantIdVal, '
                              f'group_list_items[{update_idx}].retrieved_at = :retrievedAtVal',
             ExpressionAttributeValues={
                 ':retrievedVal': 1,
+                ':participantIdVal': participant_id,
                 ':retrievedAtVal': retrieved_at,
             }
         )
