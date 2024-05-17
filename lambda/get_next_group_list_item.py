@@ -35,7 +35,7 @@ def handler(event, context):
 
         print(f"resp: {resp}")
         if resp is None:
-            return generate_response(404, body={"error": "Group list not found"})
+            return generate_response(404, body={"error": "List id not found"})
 
         group_list_model = GroupListModel(**resp)
 

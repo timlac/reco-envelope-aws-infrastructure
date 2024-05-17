@@ -21,6 +21,10 @@ def handler(event, context):
     try:
         group_list_repository = GroupListRepository(os.environ["DYNAMODB_TABLE_NAME"])
         resp = group_list_repository.get_list(group_list_id)
+
+        if not resp:
+            return generate_response(404, "List id not found")
+
         model = GroupListModel(**resp)
 
         if only_retrieved:
