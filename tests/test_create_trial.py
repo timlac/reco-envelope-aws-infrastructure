@@ -2,13 +2,15 @@ import json
 import os
 from dotenv import load_dotenv
 
-
 from list_generation.generate_randomization_list import handler as generate_randomization_list_handler
+
+from trials.create_trial import handler as create_trial
 
 load_dotenv()
 
 TABLE_NAME = os.getenv("ENVELOPE_TABLE_DEV")
 os.environ["DYNAMODB_TABLE_NAME"] = TABLE_NAME
+os.environ['AWS_PROFILE'] = 'personalAcc'
 
 
 body = {
@@ -42,10 +44,10 @@ ret = generate_randomization_list_handler(event=event, context=None)
 body = json.loads(ret["body"])
 print(body)
 
-# event = {
-#     "body": json.dumps(body)
-# }
-#
-# ret = create_group_list_handler(event=event, context=None)
-#
-# print(ret)
+event = {
+    "body": json.dumps(body)
+}
+
+ret = create_trial(event=event, context=None)
+
+print(ret)

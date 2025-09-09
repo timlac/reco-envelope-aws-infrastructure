@@ -16,8 +16,10 @@ class TrialModel(BaseModel):
     trial_id: str
     created_at: str
     trial_items: list[TrialItemModel]
+    participant_id_set: Optional[set[str]] = None
 
     def __init__(self, **data):
         if 'created_at' not in data:
             data['created_at'] = str(datetime.datetime.now(ZoneInfo("Europe/Berlin")).isoformat())
+
         super().__init__(**data)

@@ -30,6 +30,6 @@ def handler(event, context):
         if only_retrieved:
             model.trial_items = [item for item in model.trial_items if item.retrieved == 1]
 
-        return generate_response(200, body=model.dict())
+        return generate_response(200, body=model.model_dump(mode="json"))
     except Exception as e:
-        return generate_response(500, body="Error inserting data {}".format(str(e)))
+        return generate_response(500, body="Error inserting data: {}".format(str(e)))

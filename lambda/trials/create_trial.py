@@ -19,6 +19,9 @@ def handler(event, context):
     model = TrialModel(trial_id=trial_id,
                        trial_items=trial_items)
 
+    print("logging model:")
+    print(model)
+
     try:
         trial_repository = TrialRepository(os.environ["DYNAMODB_TABLE_NAME"])
         resp = trial_repository.create_trial(model)

@@ -4,6 +4,10 @@ from dotenv import load_dotenv
 
 from trials.get_specific_trial import handler
 
+
+os.environ['AWS_PROFILE'] = 'personalAcc'
+
+
 load_dotenv()
 
 TABLE_NAME = os.getenv("ENVELOPE_TABLE_DEV")
@@ -12,8 +16,11 @@ os.environ["DYNAMODB_TABLE_NAME"] = TABLE_NAME
 event = {
     "pathParameters":
         {
-            "group_list_id": "5a6ec4955c869e921f32bb4e17edd31827728cc1924c3a21f192c2a068c004cc"
-        }
+            "trial_id": "2d83d503e8266069362a9aee6ce59db54a9b6bcd50d618adcf3bcafa258dc154"
+        },
+    "queryStringParameters": {
+        "only_retrieved": "0"
+    }
 }
 
 

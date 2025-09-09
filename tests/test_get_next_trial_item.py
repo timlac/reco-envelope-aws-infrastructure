@@ -1,11 +1,10 @@
 import json
 import os
 from dotenv import load_dotenv
-
-
-os.environ['AWS_PROFILE'] = 'rackspaceAcc'
-
 from trials.get_next_trial_item import handler
+
+
+os.environ['AWS_PROFILE'] = 'personalAcc'
 
 load_dotenv()
 
@@ -15,10 +14,11 @@ os.environ["DYNAMODB_TABLE_NAME"] = TABLE_NAME
 event = {
     "pathParameters":
         {
-            "group_list_id": "caea2310fc38db392849427e06ad89724d556eb2c6996b94e4752b45e9083e8e"
+            "trial_id": "2d83d503e8266069362a9aee6ce59db54a9b6bcd50d618adcf3bcafa258dc154"
         },
     "body": json.dumps({
         "participant_id": "Tim"
+        , "administrator": "Dr. Smith"
     })
 }
 

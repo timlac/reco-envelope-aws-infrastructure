@@ -40,7 +40,6 @@ def handler(event, context):
             return generate_response(404, body={"error": "Trial id not found"})
 
         trial_model = TrialModel(**resp)
-
         next_item_index = get_next_item_index(trial_model)
 
         if next_item_index == None:
@@ -58,12 +57,14 @@ def handler(event, context):
 
         resp = {
             "trial_id": trial_id,
-            "trial_items": trial_model.trial_items[next_item_index].dict(),
+            "trial_items": trial_model.trial_items[next_item_index].model_dump(),
             "participant_id": participant_id,
             "trial_item_index": next_item_index,
             "retrieved_at": current_time
         }
         return generate_response(200, body=resp)
 
+    except ValueError as e:
+        return generate_response(400, body={"error": str(e)})
     except Exception as e:
         return generate_response(500, body="Error inserting data {}".format(str(e)))
