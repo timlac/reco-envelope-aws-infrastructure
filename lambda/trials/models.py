@@ -4,17 +4,18 @@ import datetime
 from zoneinfo import ZoneInfo
 
 
-class GroupListItemModel(BaseModel):
+class TrialItemModel(BaseModel):
     retrieved: int
     retrieved_at: Optional[str] = None
     participant_id: Optional[str] = None
+    administrator_id: Optional[str] = None
     data: Dict[str, Any] = {}
 
 
-class GroupListModel(BaseModel):
-    group_list_id: str
+class TrialModel(BaseModel):
+    trial_id: str
     created_at: str
-    group_list_items: list[GroupListItemModel]
+    trial_items: list[TrialItemModel]
 
     def __init__(self, **data):
         if 'created_at' not in data:

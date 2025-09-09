@@ -3,13 +3,13 @@ import datetime
 from zoneinfo import ZoneInfo
 import json
 from utils import generate_response
-from group_list_repository import GroupListRepository
-from models import GroupListModel, GroupListItemModel
+from trials.trial_repository import TrialRepository
+from trials.models import TrialModel, TrialItemModel
 
 
-def get_next_item_index(group_list_model):
+def get_next_item_index(trial_model):
     next_item_index = None
-    for index, item in enumerate(group_list_model.group_list_items):
+    for index, item in enumerate(trial_model.trial_items):
         if item.retrieved == 0:
             next_item_index = index
             break
@@ -21,25 +21,27 @@ def get_next_item_index(group_list_model):
 
 
 def handler(event, context):
-    group_list_id = event['pathParameters']['group_list_id']
+    trial_id = event['pathParameters']['trial_id']
 
     body = json.loads(event['body'])
     participant_id = body['participant_id']
+    administrator_id = body['administrator']
 
-    print(f"group_list_id: {group_list_id}")
+    print(f"trial_id: {trial_id}")
     print(f"participant_id: {participant_id}")
+    print(f"administrator_id: {administrator_id}")
 
     try:
-        group_list_repository = GroupListRepository(os.environ["DYNAMODB_TABLE_NAME"])
-        resp = group_list_repository.get_list(group_list_id)
+        trial_repository = TrialRepository(os.environ["DYNAMODB_TABLE_NAME"])
+        resp = trial_repository.get_trial(trial_id)
 
         print(f"resp: {resp}")
         if resp is None:
-            return generate_response(404, body={"error": "List id not found"})
+            return generate_response(404, body={"error": "Trial id not found"})
 
-        group_list_model = GroupListModel(**resp)
+        trial_model = TrialModel(**resp)
 
-        next_item_index = get_next_item_index(group_list_model)
+        next_item_index = get_next_item_index(trial_model)
 
         if next_item_index == None:
             return generate_response(200, body={
@@ -48,16 +50,17 @@ def handler(event, context):
             })
 
         current_time = str(datetime.datetime.now(ZoneInfo("Europe/Berlin")).isoformat())
-        group_list_repository.update_list_item(group_list_id=group_list_id,
-                                               update_idx=next_item_index,
-                                               participant_id=participant_id,
-                                               retrieved_at=current_time)
+        trial_repository.update_list_item(trial_id=trial_id,
+                                          update_idx=next_item_index,
+                                          participant_id=participant_id,
+                                          retrieved_at=current_time,
+                                          administrator_id=administrator_id)
 
         resp = {
-            "group_list_id": group_list_id,
-            "group_list_item": group_list_model.group_list_items[next_item_index].dict(),
+            "trial_id": trial_id,
+            "trial_items": trial_model.trial_items[next_item_index].dict(),
             "participant_id": participant_id,
-            "group_list_item_index": next_item_index,
+            "trial_item_index": next_item_index,
             "retrieved_at": current_time
         }
         return generate_response(200, body=resp)

@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 os.environ['AWS_PROFILE'] = 'rackspaceAcc'
 
-from get_next_group_list_item import handler
+from trials.get_next_trial_item import handler
 
 load_dotenv()
 

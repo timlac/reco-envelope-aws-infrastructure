@@ -1,12 +1,19 @@
 import json
-from generate_list import generate_blocks, assert_proportions
+from list_generation.generate_list import generate_blocks, assert_proportions
 from utils import generate_response
+
+
+MAX_LIST_LENGTH = 1000
 
 
 def handler(event, context):
     data = json.loads(event["body"])
 
     list_length = int(data["list_length"])
+
+    if list_length > MAX_LIST_LENGTH:
+        return generate_response(400, "Invalid list length, maximum length is {}".format(MAX_LIST_LENGTH))
+
     block_size_list = (data["block_size_list"])
     block_size_list = [int(x) for x in block_size_list]
 

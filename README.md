@@ -56,3 +56,16 @@ command.
  * `cdk docs`        open CDK documentation
 
 Enjoy!
+
+## Building the stacks
+
+`source venv/bin/activate`  
+`nvm use 20`  
+`export AWS_PROFILE=personalAcc`
+
+EnvelopeStack:
+
+```
+cdk deploy EnvelopeStack-dev --context env=dev
+cdk deploy EnvelopeStack-prod --context env=prod
+```

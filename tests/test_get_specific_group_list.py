@@ -1,9 +1,8 @@
-import json
 import os
 from dotenv import load_dotenv
 
 
-from get_specific_group_list import handler
+from trials.get_specific_trial import handler
 
 load_dotenv()
 

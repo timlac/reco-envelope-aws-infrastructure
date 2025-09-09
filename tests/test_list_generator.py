@@ -1,4 +1,4 @@
-from generate_list import get_items
+from list_generation.generate_list import get_items
 
 
 data = {

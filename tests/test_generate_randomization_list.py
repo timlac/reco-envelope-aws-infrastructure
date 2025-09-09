@@ -1,6 +1,6 @@
 import json
 import pandas as pd
-from generate_randomization_list import handler
+from list_generation.generate_randomization_list import handler
 
 body = {
     "block_size_list": [

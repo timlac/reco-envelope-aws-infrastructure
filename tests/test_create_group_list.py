@@ -1,11 +1,9 @@
 import json
-import pandas as pd
 import os
 from dotenv import load_dotenv
 
 
-from generate_randomization_list import handler as generate_randomization_list_handler
-from create_group_list import handler as create_group_list_handler
+from list_generation.generate_randomization_list import handler as generate_randomization_list_handler
 
 load_dotenv()
 

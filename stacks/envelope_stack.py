@@ -28,9 +28,9 @@ class EnvelopeStack(Stack):
                                  )
 
         # DynamoDB
-        group_list_table = dynamodb.Table(self, "group_list_table",
+        trial_table = dynamodb.Table(self, "trial_table",
                                       partition_key=dynamodb.Attribute(
-                                          name="group_list_id",
+                                          name="trial_id",
                                           type=dynamodb.AttributeType.STRING
                                       ),
                                       billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
@@ -46,34 +46,35 @@ class EnvelopeStack(Stack):
         generate_randomization_list = lambda_.Function(
             self, "GenerateRandomizationList",
             runtime=lambda_.Runtime.PYTHON_3_10,
-            handler="generate_randomization_list.handler",
+            handler="list_generation.generate_randomization_list.handler",
             code=lambda_.Code.from_asset("lambda"),
             memory_size=4096,
             layers=[layer]
         )
 
-        create_group_list = lambda_.Function(
-            self, "CreateGroupList",
+        create_trial = lambda_.Function(
+            self, "CreateTrial",
             runtime=lambda_.Runtime.PYTHON_3_10,
-            handler="create_group_list.handler",
+            handler="trials.create_trial.handler",
             code=lambda_.Code.from_asset("lambda"),
-            environment={"DYNAMODB_TABLE_NAME": group_list_table.table_name},
-            layers = [layer]
+            environment={"DYNAMODB_TABLE_NAME": trial_table.table_name},
+            layers = [layer],
+            memory_size=1024
         )
 
-        get_specific_group_list = lambda_.Function(self, "GetSpecificGroupList",
+        get_specific_trial = lambda_.Function(self, "GetSpecificGroupList",
                                                    runtime=lambda_.Runtime.PYTHON_3_10,
-                                                   handler="get_specific_group_list.handler",
+                                                   handler="trials.get_specific_trial.handler",
                                                    code=lambda_.Code.from_asset("lambda"),
-                                                   environment={"DYNAMODB_TABLE_NAME": group_list_table.table_name},
+                                                   environment={"DYNAMODB_TABLE_NAME": trial_table.table_name},
                                                    memory_size=1024,
                                                    layers = [layer])
 
-        get_next_group_list_item = lambda_.Function(self, "GetNextGroupListItem",
+        get_next_trial_item = lambda_.Function(self, "GetNextTrialItem",
                                                     runtime=lambda_.Runtime.PYTHON_3_10,
-                                                    handler="get_next_group_list_item.handler",
+                                                    handler="trials.get_next_trial_item.handler",
                                                     code=lambda_.Code.from_asset("lambda"),
-                                                    environment={"DYNAMODB_TABLE_NAME": group_list_table.table_name},
+                                                    environment={"DYNAMODB_TABLE_NAME": trial_table.table_name},
                                                     memory_size=1024,
                                                     layers = [layer])
 
@@ -84,18 +85,18 @@ class EnvelopeStack(Stack):
                                        code=lambda_.Code.from_asset("lambda")
                                        )
 
-        group_list_table.grant_read_write_data(create_group_list)
-        group_list_table.grant_read_data(get_specific_group_list)
-        group_list_table.grant_read_write_data(get_next_group_list_item)
+        trial_table.grant_read_write_data(create_trial)
+        trial_table.grant_read_data(get_specific_trial)
+        trial_table.grant_read_write_data(get_next_trial_item)
 
-        group_lists = api.root.add_resource("group_lists")
-        group_lists.add_method("POST", apigateway.LambdaIntegration(create_group_list))
+        trials = api.root.add_resource("trials")
+        trials.add_method("POST", apigateway.LambdaIntegration(create_trial))
 
-        specific_group_list = group_lists.add_resource("{group_list_id}")
-        specific_group_list.add_method("GET", apigateway.LambdaIntegration(get_specific_group_list))
+        specific_trial = trials.add_resource("{trial_id}")
+        specific_trial.add_method("GET", apigateway.LambdaIntegration(get_specific_trial))
 
-        specific_group_list_next = specific_group_list.add_resource("next_item")
-        specific_group_list_next.add_method("POST", apigateway.LambdaIntegration(get_next_group_list_item))
+        specific_trial_next = specific_trial.add_resource("next_item")
+        specific_trial_next.add_method("POST", apigateway.LambdaIntegration(get_next_trial_item))
 
         simple_randomizer = api.root.add_resource('simple_randomizer')
         simple_randomizer.add_method("POST", apigateway.LambdaIntegration(generate_randomization_list))
@@ -103,7 +104,7 @@ class EnvelopeStack(Stack):
         hello_world = api.root.add_resource('hello_world')
         hello_world.add_method("GET", apigateway.LambdaIntegration(say_hello))
 
-        api_deployment = apigateway.Deployment(self, "APIDeployment20240516a", api=api)
+        api_deployment = apigateway.Deployment(self, "APIDeployment20250908a", api=api)
         api_stage = apigateway.Stage(self, f"{env}", deployment=api_deployment, stage_name=env)
 
 

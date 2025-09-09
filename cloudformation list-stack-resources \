@@ -1,0 +1,96 @@
+{
+    "Stacks": [
+        {
+            "StackId": "arn:aws:cloudformation:eu-west-1:061749825266:stack/CDKToolkit/d0416ad0-9a51-11ed-b1d7-0ad04f810071",
+            "StackName": "CDKToolkit",
+            "Description": "This stack includes resources needed to deploy AWS CDK apps into this environment",
+            "Parameters": [
+                {
+                    "ParameterKey": "FileAssetsBucketKmsKeyId",
+                    "ParameterValue": "AWS_MANAGED_KEY"
+                },
+                {
+                    "ParameterKey": "PublicAccessBlockConfiguration",
+                    "ParameterValue": "true"
+                },
+                {
+                    "ParameterKey": "UseExamplePermissionsBoundary",
+                    "ParameterValue": "false"
+                },
+                {
+                    "ParameterKey": "FileAssetsBucketName",
+                    "ParameterValue": ""
+                },
+                {
+                    "ParameterKey": "InputPermissionsBoundary",
+                    "ParameterValue": ""
+                },
+                {
+                    "ParameterKey": "CloudFormationExecutionPolicies",
+                    "ParameterValue": ""
+                },
+                {
+                    "ParameterKey": "TrustedAccountsForLookup",
+                    "ParameterValue": ""
+                },
+                {
+                    "ParameterKey": "Qualifier",
+                    "ParameterValue": "hnb659fds"
+                },
+                {
+                    "ParameterKey": "ContainerAssetsRepositoryName",
+                    "ParameterValue": ""
+                },
+                {
+                    "ParameterKey": "TrustedAccounts",
+                    "ParameterValue": ""
+                }
+            ],
+            "CreationTime": "2023-01-22T12:39:29.728000+00:00",
+            "LastUpdatedTime": "2025-09-08T13:27:31.065000+00:00",
+            "RollbackConfiguration": {},
+            "StackStatus": "UPDATE_ROLLBACK_FAILED",
+            "StackStatusReason": "The following resource(s) failed to update: [StagingBucket, ContainerAssetsRepository]. ",
+            "DisableRollback": false,
+            "NotificationARNs": [],
+            "Capabilities": [
+                "CAPABILITY_IAM",
+                "CAPABILITY_NAMED_IAM",
+                "CAPABILITY_AUTO_EXPAND"
+            ],
+            "Outputs": [
+                {
+                    "OutputKey": "ImageRepositoryName",
+                    "OutputValue": "cdk-hnb659fds-container-assets-061749825266-eu-west-1",
+                    "Description": "The name of the ECR repository which hosts docker image assets"
+                },
+                {
+                    "OutputKey": "BucketName",
+                    "OutputValue": "cdk-hnb659fds-assets-061749825266-eu-west-1",
+                    "Description": "The name of the S3 bucket owned by the CDK toolkit stack"
+                },
+                {
+                    "OutputKey": "BootstrapVersion",
+                    "OutputValue": "15",
+                    "Description": "The version of the bootstrap resources that are currently mastered in this stack"
+                },
+                {
+                    "OutputKey": "BucketDomainName",
+                    "OutputValue": "cdk-hnb659fds-assets-061749825266-eu-west-1.s3.eu-west-1.amazonaws.com",
+                    "Description": "The domain name of the S3 bucket owned by the CDK toolkit stack"
+                },
+                {
+                    "OutputKey": "FileAssetKeyArn",
+                    "OutputValue": "AWS_MANAGED_KEY",
+                    "Description": "The ARN of the KMS key used to encrypt the asset bucket (deprecated)",
+                    "ExportName": "CdkBootstrap-hnb659fds-FileAssetKeyArn"
+                }
+            ],
+            "Tags": [],
+            "EnableTerminationProtection": false,
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}
