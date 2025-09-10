@@ -1,5 +1,6 @@
 import boto3
 from botocore.exceptions import ClientError
+from trials.custom_errors import ParticipantAlreadyInTrial, SlotAlreadyTaken
 
 
 class TrialRepository:
@@ -54,7 +55,6 @@ class TrialRepository:
                 ConditionExpression=(
                     '(attribute_not_exists(participant_id_set) OR NOT contains(participant_id_set, :pid)) '
                     f'AND trial_items[{update_idx}].retrieved = :zero '
-                    f'AND attribute_not_exists(trial_items[{update_idx}].participant_id)'
                 ),
                 ExpressionAttributeValues={
                     ':one': 1,
