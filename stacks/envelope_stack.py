@@ -20,6 +20,7 @@ class EnvelopeStack(Stack):
         # Api Definition
         api = apigateway.RestApi(self,
                                  f"envelope_api-{env}",
+                                 throttle=apigateway.ThrottleSettings(rate_limit=100, burst_limit=20),
                                  default_cors_preflight_options=apigateway.CorsOptions(
                                      allow_origins=apigateway.Cors.ALL_ORIGINS,
                                      allow_methods=apigateway.Cors.ALL_METHODS,
@@ -29,12 +30,12 @@ class EnvelopeStack(Stack):
 
         # DynamoDB
         trial_table = dynamodb.Table(self, "trial_table",
-                                      partition_key=dynamodb.Attribute(
-                                          name="trial_id",
-                                          type=dynamodb.AttributeType.STRING
-                                      ),
-                                      billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
-                                      )
+                                     partition_key=dynamodb.Attribute(
+                                         name="trial_id",
+                                         type=dynamodb.AttributeType.STRING
+                                     ),
+                                     billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+                                     )
 
         layer = lambda_.LayerVersion(
             self, 'DependencyLayer',
@@ -49,7 +50,8 @@ class EnvelopeStack(Stack):
             handler="list_generation.generate_randomization_list.handler",
             code=lambda_.Code.from_asset("lambda"),
             memory_size=4096,
-            layers=[layer]
+            layers=[layer],
+            reserved_concurrent_executions=5
         )
 
         create_trial = lambda_.Function(
@@ -58,32 +60,37 @@ class EnvelopeStack(Stack):
             handler="trials.create_trial.handler",
             code=lambda_.Code.from_asset("lambda"),
             environment={"DYNAMODB_TABLE_NAME": trial_table.table_name},
-            layers = [layer],
-            memory_size=1024
+            layers=[layer],
+            memory_size=1024,
+            reserved_concurrent_executions=5
         )
 
         get_specific_trial = lambda_.Function(self, "GetSpecificGroupList",
-                                                   runtime=lambda_.Runtime.PYTHON_3_10,
-                                                   handler="trials.get_specific_trial.handler",
-                                                   code=lambda_.Code.from_asset("lambda"),
-                                                   environment={"DYNAMODB_TABLE_NAME": trial_table.table_name},
-                                                   memory_size=1024,
-                                                   layers = [layer])
+                                              runtime=lambda_.Runtime.PYTHON_3_10,
+                                              handler="trials.get_specific_trial.handler",
+                                              code=lambda_.Code.from_asset("lambda"),
+                                              environment={"DYNAMODB_TABLE_NAME": trial_table.table_name},
+                                              memory_size=1024,
+                                              layers=[layer],
+                                              reserved_concurrent_executions=5
+                                              )
 
         get_next_trial_item = lambda_.Function(self, "GetNextTrialItem",
-                                                    runtime=lambda_.Runtime.PYTHON_3_10,
-                                                    handler="trials.get_next_trial_item.handler",
-                                                    code=lambda_.Code.from_asset("lambda"),
-                                                    environment={"DYNAMODB_TABLE_NAME": trial_table.table_name},
-                                                    memory_size=1024,
-                                                    layers = [layer])
-
+                                               runtime=lambda_.Runtime.PYTHON_3_10,
+                                               handler="trials.get_next_trial_item.handler",
+                                               code=lambda_.Code.from_asset("lambda"),
+                                               environment={"DYNAMODB_TABLE_NAME": trial_table.table_name},
+                                               memory_size=1024,
+                                               layers=[layer],
+                                               reserved_concurrent_executions=5
+                                               )
 
         say_hello = lambda_.Function(self, "HelloWorld",
-                                       runtime=lambda_.Runtime.PYTHON_3_10,
-                                       handler="hello_world.handler",
-                                       code=lambda_.Code.from_asset("lambda")
-                                       )
+                                     runtime=lambda_.Runtime.PYTHON_3_10,
+                                     handler="hello_world.handler",
+                                     code=lambda_.Code.from_asset("lambda"),
+                                     reserved_concurrent_executions=5
+                                     )
 
         trial_table.grant_read_write_data(create_trial)
         trial_table.grant_read_data(get_specific_trial)
@@ -106,16 +113,3 @@ class EnvelopeStack(Stack):
 
         api_deployment = apigateway.Deployment(self, "APIDeployment20250908a", api=api)
         api_stage = apigateway.Stage(self, f"{env}", deployment=api_deployment, stage_name=env)
-
-
-
-
-
-
-
-
-
-
-
-
-

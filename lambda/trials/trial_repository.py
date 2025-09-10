@@ -1,6 +1,5 @@
 import boto3
 from botocore.exceptions import ClientError
-from trials.custom_errors import ParticipantAlreadyInTrial, SlotAlreadyTaken
 
 
 class TrialRepository:
@@ -67,8 +66,24 @@ class TrialRepository:
                 ReturnValues='UPDATED_NEW'
             )
             return update_idx
+
         except ClientError as e:
             if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
-                # Check which condition failed (requires additional logic or DynamoDB Streams for precision)
-                raise ValueError("Participant ID already in trial or slot already taken")
+                # Query the item to determine the failure reason
+                try:
+                    item = self.get_trial(trial_id)
+                    if item:
+
+                        if participant_id in item.get('participant_id_set', set()):
+                            raise ValueError(f"Participant ID '{participant_id}' already in trial")
+
+                        if update_idx < len(item.get('trial_items', [])):
+                            trial_item = item['trial_items'][update_idx]
+                            if trial_item.get('retrieved', 0) != 0:
+                                raise ValueError(f"Slot at index {update_idx} already taken")
+
+                    raise ValueError(f"Invalid update: trial not found or index out of range")
+
+                except ClientError:
+                    raise ValueError("Failed to determine error cause; trial may not exist")
             raise e

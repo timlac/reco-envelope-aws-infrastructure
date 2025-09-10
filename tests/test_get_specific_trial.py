@@ -16,7 +16,7 @@ os.environ["DYNAMODB_TABLE_NAME"] = TABLE_NAME
 event = {
     "pathParameters":
         {
-            "trial_id": "2d83d503e8266069362a9aee6ce59db54a9b6bcd50d618adcf3bcafa258dc154"
+            "trial_id": "77041e39383b017ad5405cc8ccf2afb93e5d0f0630293104ec22665846dd03ee"
         },
     "queryStringParameters": {
         "only_retrieved": "0"
@@ -27,3 +27,5 @@ event = {
 resp = handler(event, None)
 
 print(resp)
+
+trial_item = item['trial_items'][update_idx]
