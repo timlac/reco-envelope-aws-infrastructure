@@ -20,7 +20,6 @@ class EnvelopeStack(Stack):
         # Api Definition
         api = apigateway.RestApi(self,
                                  f"envelope_api-{env}",
-                                 throttle=apigateway.ThrottleSettings(rate_limit=100, burst_limit=20),
                                  default_cors_preflight_options=apigateway.CorsOptions(
                                      allow_origins=apigateway.Cors.ALL_ORIGINS,
                                      allow_methods=apigateway.Cors.ALL_METHODS,
@@ -111,5 +110,5 @@ class EnvelopeStack(Stack):
         hello_world = api.root.add_resource('hello_world')
         hello_world.add_method("GET", apigateway.LambdaIntegration(say_hello))
 
-        api_deployment = apigateway.Deployment(self, "APIDeployment20250908a", api=api)
+        api_deployment = apigateway.Deployment(self, "APIDeployment20250910", api=api)
         api_stage = apigateway.Stage(self, f"{env}", deployment=api_deployment, stage_name=env)
