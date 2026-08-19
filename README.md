@@ -1,6 +1,6 @@
-# Reco Envelope AWS infrastructure
+# Sealed-envelope randomization AWS infrastructure
 
-AWS CDK application for the API Gateway, Lambda functions, and DynamoDB table used by Reco Envelope.
+AWS CDK application that deploys the serverless backend for generating and storing blocked randomization lists and issuing allocations sequentially. The stack provisions API Gateway, Lambda functions, and a DynamoDB table.
 
 ## Requirements
 
