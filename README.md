@@ -48,3 +48,7 @@ The stack does not host the frontend. The API currently allows cross-origin requ
 # Replace prod with dev when removing the development stack
 cdk destroy EnvelopeStack-prod --context env=prod
 ```
+
+## Release
+
+The version described in the accompanying manuscript is `v1.0.0`. See [GitHub Releases](../../releases) for archived versions.
