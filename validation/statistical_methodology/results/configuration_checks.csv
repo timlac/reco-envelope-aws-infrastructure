@@ -1,0 +1,8 @@
+case,status,groups,block_sizes,requested_length,observed_length,runs,unique_sequences
+reported_5_5_2,PASS,"{'A': 5, 'B': 5, 'C': 2}","(12, 24)",240,240,100,100
+equal_two_arm,PASS,"{'A': 1, 'B': 1}","(4, 8)",40,40,100,100
+equal_three_arm,PASS,"{'A': 1, 'B': 1, 'C': 1}","(3, 6)",30,30,100,100
+very_short_list,PASS,"{'A': 5, 'B': 5, 'C': 2}","(12, 24)",5,12,100,99
+minimum_block_fit,PASS,"{'A': 5, 'B': 5, 'C': 2}","(12, 24)",12,12,100,100
+very_large_block,PASS,"{'A': 5, 'B': 5, 'C': 2}","(600,)",600,600,100,100
+large_block_overrun,PASS,"{'A': 5, 'B': 5, 'C': 2}","(600,)",50,600,100,100

@@ -1,71 +1,50 @@
+# Reco Envelope AWS infrastructure
 
-# Welcome to your CDK Python project!
+AWS CDK application for the API Gateway, Lambda functions, and DynamoDB table used by Reco Envelope.
 
-This is a blank project for CDK development with Python.
+## Requirements
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+- An AWS account with credentials and a default region configured locally.
+- Python 3.10, Node.js, the AWS CLI, and AWS CDK v2.
+- Permission to deploy CloudFormation stacks and create or update IAM roles, Lambda functions, API Gateway, DynamoDB, CloudWatch Logs, and CDK assets in S3.
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+The CDK stack creates the Lambda execution roles and their DynamoDB permissions.
 
-To manually create a virtualenv on MacOS and Linux:
+## Environments
 
-```
-$ python3 -m venv .venv
-```
+The `env` CDK context controls the stack name and API Gateway stage. Supported conventions are:
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
+- `dev`: development stack and `/dev` API stage. This is the default when `env` is omitted.
+- `prod`: production stack and `/prod` API stage.
 
-```
-$ source .venv/bin/activate
-```
+Each environment is deployed as a separate stack with its own API, Lambda functions, and DynamoDB table. There is no staging environment.
 
-If you are a Windows platform, you would activate the virtualenv like this:
+## Deploy
 
-```
-% .venv\Scripts\activate.bat
-```
+Deploy only the environment you need:
 
-Once the virtualenv is activated, you can install the required dependencies.
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 
-```
-$ pip install -r requirements.txt
-```
+# Required once for each AWS account and region
+cdk bootstrap
 
-At this point you can now synthesize the CloudFormation template for this code.
-
-```
-$ cdk synth
-```
-
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
-
-## Useful commands
-
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
-
-Enjoy!
-
-## Building the stacks
-
-`source venv/bin/activate`  
-`nvm use 20`  
-`export AWS_PROFILE=personalAcc`
-
-EnvelopeStack:
-
-```
+# Development
 cdk deploy EnvelopeStack-dev --context env=dev
+
+# Production
 cdk deploy EnvelopeStack-prod --context env=prod
+```
+
+After deployment, find the invoke URL under **API Gateway > Stages > dev** or **prod** and use it as `REACT_APP_API_URL` in the frontend.
+
+The stack does not host the frontend. The API currently allows cross-origin requests and does not configure an authorizer.
+
+## Remove
+
+```bash
+# Replace prod with dev when removing the development stack
+cdk destroy EnvelopeStack-prod --context env=prod
 ```
