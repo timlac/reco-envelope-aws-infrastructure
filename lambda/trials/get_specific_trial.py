@@ -19,6 +19,12 @@ def handler(event, context):
     print(f"trial_id: {trial_id}")
 
     try:
+        if not only_retrieved:
+            return generate_response(
+                403,
+                body="Full-list retrieval is not permitted."
+            )
+
         trial_repository = TrialRepository(os.environ["DYNAMODB_TABLE_NAME"])
         resp = trial_repository.get_trial(trial_id)
 
@@ -32,4 +38,4 @@ def handler(event, context):
 
         return generate_response(200, body=model.model_dump(mode="json"))
     except Exception as e:
-        return generate_response(500, body="Error inserting data: {}".format(str(e)))
+        return generate_response(500, body="Error retrieving data: {}".format(str(e)))

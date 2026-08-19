@@ -51,4 +51,4 @@ cdk destroy EnvelopeStack-prod --context env=prod
 
 ## Release
 
-The version described in the accompanying manuscript is `v1.0.0`. See [GitHub Releases](../../releases) for archived versions.
+The version described in the accompanying manuscript is `v1.0.1`. See [GitHub Releases](../../releases) for archived versions.
