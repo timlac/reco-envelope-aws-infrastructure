@@ -40,7 +40,13 @@ cdk deploy EnvelopeStack-prod --context env=prod
 
 After deployment, find the invoke URL under **API Gateway > Stages > dev** or **prod** and use it as `REACT_APP_API_URL` in the frontend.
 
-The stack does not host the frontend. The API currently allows cross-origin requests and does not configure an authorizer.
+The stack does not host the frontend.
+
+## Access control and debugging
+
+The API allows cross-origin requests and does not configure an authorizer. Trial-data requests require `only_retrieved=1`; unfiltered requests return `403 Forbidden` to prevent disclosure of future allocations.
+
+Full-list retrieval logic remains available for local debugging. It can be re-enabled by removing the `if not only_retrieved` guard in `lambda/trials/get_specific_trial.py`, but this modification should not be used in an unauthenticated public deployment.
 
 ## Remove
 
